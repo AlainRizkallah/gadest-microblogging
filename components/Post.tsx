@@ -13,7 +13,7 @@ export type PostProps = {
 };
 
 const Post: React.FC<{ post: PostProps }> = ({ post }) => {
-  const authorName = post.author ? post.author.name : "Unknown author";
+  const authorName = post.author ? post.author.email : "Unknown author";
   return (
     <div>
       <Box p={1} pl={3} mb={1} component={Paper}>

@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { Avatar, Grid, Link as MUILink, Paper, Typography } from '@mui/material';
+import { AppBar, Avatar, Grid, Link as MUILink, Paper, Toolbar, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
 
 import { Box, Button } from '@mui/material';
@@ -20,8 +20,8 @@ const Header: React.FC = () => {
         <Grid item>
         <Link href="/" passHref>
          <MUILink variant="body2" style={{ textDecoration: 'none' }}>
-            <Button variant={isActive("/")? "contained" : "outlined"}>
-              Feed
+            <Button variant={isActive("/")? "contained" : "outlined"} color='secondary'>
+              Home
             </Button>
           </MUILink>
         </Link>
@@ -43,7 +43,7 @@ const Header: React.FC = () => {
   if (!user) {
     right = (
       <div className="right">
-        <a href="/api/auth/login"><Button variant='outlined'>Login</Button></a>
+        <a href="/api/auth/login"><Button variant='outlined' color='secondary' >Login</Button></a>
       </div>
     );
   }
@@ -54,8 +54,8 @@ const Header: React.FC = () => {
         <Grid item>
         <Link href="/" passHref>
          <MUILink variant="body2" style={{ textDecoration: 'none' }}>
-            <Button variant={isActive("/")? "contained" : "outlined"}>
-              Feed
+            <Button variant={isActive("/")? "contained" : "outlined"} color='secondary'>
+              Home
             </Button>
           </MUILink>
         </Link>
@@ -78,7 +78,7 @@ const Header: React.FC = () => {
         
               
                   <Box display='inline-block' alignItems='center'>
-            <a href="/api/auth/logout"><Button variant='outlined'>Logout</Button></a>
+            <a href="/api/auth/logout"><Button variant='outlined' color='secondary'>Logout</Button></a>
               </Box>
    
               </Grid>
@@ -92,9 +92,13 @@ const Header: React.FC = () => {
 
   return (
     <nav>
-    <Box display="flex" p={2} bgcolor='lightgray'>
-      {left}
-      {right}
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position="static">
+        <Toolbar>
+          {left}
+          {right}
+        </Toolbar>
+      </AppBar>
     </Box>
     </nav>
 
