@@ -126,7 +126,9 @@ const Home: NextPage<Props> = (props) => {
           {data && data.pages.map((page)=>(
             <React.Fragment key={page.nextId ?? 'lastpage'}>
               {page.posts.map( (post: PostProps) => (
+                <div key={post.id}>
                 <Post post={post} />
+                </div>
               ))}
             </React.Fragment>
           ))
