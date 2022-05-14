@@ -1,108 +1,180 @@
-import React from 'react';
-import Link from 'next/link';
-import { AppBar, Avatar, Grid, Link as MUILink, Paper, Toolbar, Typography } from '@mui/material';
-import { useRouter } from 'next/router';
-
-import { Box, Button } from '@mui/material';
+import * as React from 'react';
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import Menu from '@mui/material/Menu';
+// import MenuIcon from '@mui/icons-material/Menu';
+import Container from '@mui/material/Container';
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import Tooltip from '@mui/material/Tooltip';
+import MenuItem from '@mui/material/MenuItem';
 import { useUser } from '@auth0/nextjs-auth0';
 
-const Header: React.FC = () => {
-  const router = useRouter();
-  const isActive: (pathname: string) => boolean = (pathname) =>
-    router.pathname === pathname;
+const pages: any[] = [];
+// const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
-    const { user, error, isLoading } = useUser();
-    // if (isLoading) return <div>Loading...</div>;
-    if (error) return <div>{error.message}</div>;
+const ResponsiveAppBar = () => {
+  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
+  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
-  let left = (
-        <Grid container direction="row" alignItems="center" spacing={1}>
-        <Grid item>
-        <Link href="/" passHref>
-         <MUILink variant="body2" style={{ textDecoration: 'none' }}>
-            <Button variant={isActive("/")? "contained" : "outlined"} color='secondary'>
-              Home
-            </Button>
-          </MUILink>
-        </Link>
-        </Grid>
-        </Grid>
-  );
+  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElNav(event.currentTarget);
+  };
+  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElUser(event.currentTarget);
+  };
 
-  let right = null;
+  const handleCloseNavMenu = () => {
+    setAnchorElNav(null);
+  };
 
-  if (isLoading){
-    right = (
-      <div className="right">
-        Loading...
-      </div>
-    );
-  }
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
 
-
-  if (!user) {
-    right = (
-      <div className="right">
-        <a href="/api/auth/login"><Button variant='outlined' color='secondary' >Login</Button></a>
-      </div>
-    );
-  }
-
-  if (user) {
-    left = (
-      <Grid container direction="row" alignItems="center" spacing={1}>
-        <Grid item>
-        <Link href="/" passHref>
-         <MUILink variant="body2" style={{ textDecoration: 'none' }}>
-            <Button variant={isActive("/")? "contained" : "outlined"} color='secondary'>
-              Home
-            </Button>
-          </MUILink>
-        </Link>
-        </Grid>
-        </Grid>
-    );
-    right = (
-      <div className="right">
-        <Box display='flex'>
-            {user.picture ? <Avatar src={user.picture} /> : <Avatar />}
-           
-              <Box mx={2}>
-            <Typography>
-              {user.name} ({user.email})
-            </Typography>
-              </Box>
-
-              <Grid container direction="row" alignItems="center" spacing={1}>
-              <Grid item>
-        
-              
-                  <Box display='inline-block' alignItems='center'>
-            <a href="/api/auth/logout"><Button variant='outlined' color='secondary'>Logout</Button></a>
-              </Box>
-   
-              </Grid>
-              </Grid>
-              
-        </Box>
-        
-      </div>
-    );
-  }
+  const { user, error, isLoading } = useUser();
+  // if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>{error.message}</div>;
 
   return (
-    <nav>
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
-        <Toolbar>
-          {left}
-          {right}
-        </Toolbar>
-      </AppBar>
-    </Box>
-    </nav>
+    <AppBar position="static">
+      <Container maxWidth="xl">
+        <Toolbar disableGutters>
+          <Typography
+            variant="h6"
+            noWrap
+            component="a"
+            href="/"
+            sx={{
+              mr: 2,
+              display: { xs: 'none', md: 'flex' },
+              fontFamily: 'monospace',
+              fontWeight: 700,
+              letterSpacing: '.3rem',
+              color: 'inherit',
+              textDecoration: 'none',
+            }}
+          >
+            Home
+          </Typography>
 
+          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+            <IconButton
+              size="large"
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={handleOpenNavMenu}
+              color="inherit"
+            >
+              {/* <MenuIcon /> */}
+            </IconButton>
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorElNav}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+              }}
+              open={Boolean(anchorElNav)}
+              onClose={handleCloseNavMenu}
+              sx={{
+                display: { xs: 'block', md: 'none' },
+              }}
+            >
+              {pages.map((page) => (
+                <MenuItem key={page} onClick={handleCloseNavMenu}>
+                  <Typography textAlign="center">{page}</Typography>
+                </MenuItem>
+              ))}
+            </Menu>
+          </Box>
+          <Typography
+            variant="h5"
+            noWrap
+            component="a"
+            href=""
+            sx={{
+              mr: 2,
+              display: { xs: 'flex', md: 'none' },
+              flexGrow: 1,
+              fontFamily: 'monospace',
+              fontWeight: 700,
+              letterSpacing: '.3rem',
+              color: 'inherit',
+              textDecoration: 'none',
+            }}
+          >
+            Home
+          </Typography>
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+            {pages.map((page) => (
+              <Button
+                key={page}
+                onClick={handleCloseNavMenu}
+                sx={{ my: 2, color: 'white', display: 'block' }}
+              >
+                {page}
+              </Button>
+            ))}
+          </Box>
+
+          <Box sx={{ flexGrow: 0 }}>
+            {user ? <div>
+
+              <Tooltip title="Open settings">
+              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+              {user.picture ? <Avatar src={user.picture} /> : <Avatar />}
+              </IconButton>
+            </Tooltip>
+          
+            <Menu
+              sx={{ mt: '45px' }}
+              id="menu-appbar"
+              anchorEl={anchorElUser}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              open={Boolean(anchorElUser)}
+              onClose={handleCloseUserMenu}
+            > 
+            <Box p={1}>
+            <Typography>
+              {user.name} 
+            </Typography>
+            <small>
+            ({user.email}) 
+            </small>
+            </Box>
+              
+                <MenuItem key={'setting'} onClick={handleCloseUserMenu}>
+                  <Typography textAlign="center"><a href="/api/auth/logout"><Button variant='outlined' color='secondary'>Logout</Button></a>  </Typography>
+                </MenuItem>
+              
+            </Menu>
+
+            </div>
+            
+            : <a href="/api/auth/login"><Button variant='outlined' color='secondary' >Login</Button></a>}
+            
+          </Box>
+        </Toolbar>
+      </Container>
+    </AppBar>
   );
 };
-
-export default Header;
+export default ResponsiveAppBar;
