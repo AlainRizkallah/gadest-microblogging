@@ -16,15 +16,20 @@ export type PostProps = {
 
 const Post: React.FC<{ post: PostProps }> = ({ post }) => {
   const authorName = post.author ? post.author.email : "Unknown author";
-  const [createdAt, setCreatedAt] = useState<Date>()
-  useEffect(() => setCreatedAt(post.createdAt), [])
+  const [createdAt, setCreatedAt] = useState<any>()
+  useEffect(() =>  {
+    const myDate = post.createdAt;
+    const time = new Date(myDate).toLocaleString();
+    setCreatedAt(time);
+  }, [])
+  
   return (
     <div>
       <Box p={1} pl={3} mb={1} component={Paper}>
       <h2>{post.title}</h2>
       <small>By {authorName}</small>
       <p>{post.content}</p>
-      {createdAt ? <p>createdAt: {createdAt.toLocaleDateString()}</p> : ""}
+      {createdAt ? <p>createdAt: {createdAt}</p> : ""}
       </Box>
     </div>
   );

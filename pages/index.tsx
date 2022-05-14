@@ -3,26 +3,36 @@ import Head from 'next/head'
 import Layout from '../components/Layout'
 import prisma from '../lib/prisma';
 import Post, { PostProps } from '../components/Post'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useUser } from '@auth0/nextjs-auth0'
-import { Box, Button, Grid, Paper, TextField } from '@mui/material'
+import { Box, Button, CircularProgress, Grid, Paper, TextField } from '@mui/material'
 import { useRouter } from 'next/router'
+import axios from 'axios'
+import { useInfiniteQuery } from 'react-query';
+import React from 'react';
+import { InView, useInView } from 'react-intersection-observer';
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  const feed = await prisma.post.findMany({
-    orderBy: [
-      {
-        createdAt: 'desc',
-      }
-    ],
-    include: {
-      author: {
-        select: { name: true, email: true },
-      },
-    },
-  });
-  return { props: { feed } };
-};
+// export const getServerSideProps: GetServerSideProps = async () => {
+//   const feed = await prisma.post.findMany({
+//     take: 4,
+//     orderBy: [
+//       {
+//         createdAt: 'desc',
+//       },
+//       {
+//         id: 'desc',
+//       },
+//     ],
+//     include: {
+//       author: {
+//         select: { name: true, email: true },
+//       },
+//     },
+//   });
+//   const lastPostInResults = feed[3] // Remember: zero-based index! :)
+//   const myCursor = lastPostInResults.id
+//   return { props: { feed } };
+// };
 
 type Props = {
   feed: PostProps[]
@@ -31,10 +41,12 @@ type Props = {
 const Home: NextPage<Props> = (props) => {
   const { user } = useUser()
   const router = useRouter();
+  const {ref, inView} = useInView()
 
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [refresh, setRefresh] = useState(true);
 
   const submitData = async (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -45,11 +57,24 @@ const Home: NextPage<Props> = (props) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       });
-      await router.push('/');
+      router.reload();
     } catch (error) {
       console.error(error);
     }
   };
+
+  useEffect(()=>{
+    if(inView && hasNextPage)
+    fetchNextPage()
+  }, [inView, refresh])
+  const {isLoading, isError, data, error, isFetchingNextPage, fetchNextPage, hasNextPage} = useInfiniteQuery('posts', async({ pageParam = ''}) => {
+    const res = await axios.get('/api/post?cursor=' + pageParam)
+    return res.data
+  },{
+    getNextPageParam: (lastPage) => lastPage.nextId ?? false,
+  })
+
+  console.log(data)
 
   return (
     <Layout>
@@ -94,12 +119,21 @@ const Home: NextPage<Props> = (props) => {
           </Box>
         </div>
         : ""}
-        
-          {props.feed.map((post) => (
-            <div key={post.id} className="post">
-              <Post post={post} />
-            </div>  
-          ))}
+
+          { isLoading ? <CircularProgress color='secondary'/> : ""}
+          { isError ? <div>Error!</div> : ""}
+
+          {data && data.pages.map((page)=>(
+            <React.Fragment key={page.nextId ?? 'lastpage'}>
+              {page.posts.map( (post: PostProps) => (
+                <Post post={post} />
+              ))}
+            </React.Fragment>
+          ))
+          }
+     
+          {isFetchingNextPage && <CircularProgress color='secondary'/>}
+          <span style={{visibility : 'hidden'}} ref={ref}> intersection observer marker</span>
           
         </main>
       </div>

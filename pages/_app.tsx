@@ -6,6 +6,9 @@ import { green, purple } from '@mui/material/colors';
 import darkTheme from '../styles/theme/darkTheme';
 import lightTheme from '../styles/theme/lightTheme';
 import { CssBaseline } from '@mui/material';
+import {QueryClient, QueryClientProvider} from 'react-query'
+
+const queryClient = new QueryClient()
 
 declare module '@mui/material/styles' {
   interface Theme {
@@ -38,7 +41,9 @@ function MyApp({ Component, pageProps }: AppProps) {
     <UserProvider>
       <ThemeProvider theme={lightTheme}>
       <CssBaseline />
+      <QueryClientProvider client={queryClient}>
       <Component {...pageProps} />
+      </QueryClientProvider>
       </ThemeProvider>
     </UserProvider>
   )
