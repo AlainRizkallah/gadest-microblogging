@@ -14,9 +14,11 @@
     "@emotion/styled": "^11.8.1",
     "@mui/material": "^5.7.0",
     "@prisma/client": "^3.14.0",
+    "babel-plugin-superjson-next": "^0.4.3",
     "next": "12.1.6",
     "react": "18.1.0",
-    "react-dom": "18.1.0"
+    "react-dom": "18.1.0",
+    "superjson": "^1.9.1"
   },
   "devDependencies": {
     "@types/node": "17.0.32",

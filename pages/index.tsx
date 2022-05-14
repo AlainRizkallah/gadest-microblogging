@@ -10,6 +10,11 @@ import { useRouter } from 'next/router'
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const feed = await prisma.post.findMany({
+    orderBy: [
+      {
+        createdAt: 'desc',
+      }
+    ],
     include: {
       author: {
         select: { name: true, email: true },
