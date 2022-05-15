@@ -56,6 +56,10 @@ const Home: NextPage<Props> = (props) => {
 
   return (
     <Layout>
+      <Head>
+      <title>Home</title>
+        <meta property="og:title" content="Home page title" key="home" />
+      </Head>
       <div className="page">
         <h1>Public Feed</h1>
         <main>

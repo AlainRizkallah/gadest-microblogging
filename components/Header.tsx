@@ -14,6 +14,7 @@ import { useUser } from '@auth0/nextjs-auth0';
 import { useTheme } from "next-themes";
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
+import Image from 'next/image'
 
 const pages: any[] = [];
 
@@ -47,6 +48,8 @@ const ResponsiveAppBar = () => {
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
+          <Box mr={1}><Image src="/sunmoon.svg" height={30} width={30} /></Box>
+        
           <Typography
             variant="h6"
             noWrap
