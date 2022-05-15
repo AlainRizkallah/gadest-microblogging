@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Container } from "@mui/material";
 import React, { ReactNode } from "react";
 import Header from "./Header";
 
@@ -9,9 +9,9 @@ type Props = {
 const Layout: React.FC<Props> = (props) => (
   <div>
     <Header />
-    <Box px={5}>
+    <Container maxWidth="md">
     <div className="layout">{props.children}</div>
-    </Box>
+    </Container>
   </div>
 );
 

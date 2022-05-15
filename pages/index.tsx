@@ -12,28 +12,6 @@ import { useInfiniteQuery } from 'react-query';
 import React from 'react';
 import { InView, useInView } from 'react-intersection-observer';
 
-// export const getServerSideProps: GetServerSideProps = async () => {
-//   const feed = await prisma.post.findMany({
-//     take: 4,
-//     orderBy: [
-//       {
-//         createdAt: 'desc',
-//       },
-//       {
-//         id: 'desc',
-//       },
-//     ],
-//     include: {
-//       author: {
-//         select: { name: true, email: true },
-//       },
-//     },
-//   });
-//   const lastPostInResults = feed[3] // Remember: zero-based index! :)
-//   const myCursor = lastPostInResults.id
-//   return { props: { feed } };
-// };
-
 type Props = {
   feed: PostProps[]
 }
@@ -95,22 +73,24 @@ const Home: NextPage<Props> = (props) => {
               defaultValue="Post Title"
               onChange={(e) => setTitle(e.target.value)}
               value={title}
+              color='secondary'
               />
             </Grid>
             <Grid item xs={12}>
               <TextField
               id="outlined-textarea"
-              label="Multiline Placeholder"
+              label="Description"
               placeholder="Placeholder"
               multiline
               fullWidth
               rows={4}
               onChange={(e) => setContent(e.target.value)}
               value={content}
+              color='secondary'
               />
             </Grid>
             <Grid item xs={12}>
-              <Button  disabled={!content || !title} type="submit">
+              <Button  disabled={!content || !title} type="submit" color='secondary'>
                 Create 
               </Button>
             </Grid>
@@ -127,7 +107,7 @@ const Home: NextPage<Props> = (props) => {
             <React.Fragment key={page.nextId ?? 'lastpage'}>
               {page.posts.map( (post: PostProps) => (
                 <div key={post.id}>
-                <Post post={post} />
+                <Post post={post} user={user} />
                 </div>
               ))}
             </React.Fragment>

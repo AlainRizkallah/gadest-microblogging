@@ -6,13 +6,12 @@ import { NextApiRequest, NextApiResponse } from 'next';
 // Required fields in body: title
 // Optional fields in body: content
 export default async function handle(req: NextApiRequest, res: NextApiResponse<any>) {
-  const { title, content } = req.body;
   const session = getSession(req, res)
   
   if(req.method === 'POST'){
+    const { title, content } = req.body;
     if (!session) return { prisma }
   const { user, accessToken } = session
-  
   const result = await prisma.post.create({
     data: {
       title: title,
@@ -45,5 +44,20 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse<a
       },
     });
     return res.json({posts, nextId: posts.length === limit ?  posts[limit - 1].id : undefined })
+  }
+  if(req.method === 'DELETE'){
+    const { post } = req.body;
+    if (!session) return { prisma }
+    const { user, accessToken } = session
+    console.log('user.email', user.email)
+    console.log('post', post)
+    console.log('post.user', post.user)
+    if (user.email !== post.author.email) return { prisma }
+    const result = await prisma.post.delete({
+      where: {
+        id: post.id,
+      },
+    });
+    return res.json(result);
   }
 }
