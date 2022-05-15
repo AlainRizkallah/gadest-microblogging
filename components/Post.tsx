@@ -89,7 +89,7 @@ const Post: React.FC<{ post: PostProps, user:UserProfile | undefined }> = ({ pos
         aria-labelledby="responsive-dialog-title"
       >
         <DialogTitle id="responsive-dialog-title">
-          {"Use Google's location service?"}
+          {"Delete Post"}
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -97,11 +97,11 @@ const Post: React.FC<{ post: PostProps, user:UserProfile | undefined }> = ({ pos
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button color="secondary" autoFocus onClick={handleClose}>
-            Disagree
-          </Button>
           <Button color="secondary" onClick={handleDeleteClose} autoFocus>
-            Agree
+            Yes
+          </Button>
+          <Button color="secondary" autoFocus onClick={handleClose}>
+            No
           </Button>
         </DialogActions>
       </Dialog>
