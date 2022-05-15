@@ -5,16 +5,17 @@ import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
-// import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import { useUser } from '@auth0/nextjs-auth0';
+import { useTheme } from "next-themes";
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
 
 const pages: any[] = [];
-// const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 const ResponsiveAppBar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
@@ -39,6 +40,9 @@ const ResponsiveAppBar = () => {
   // if (isLoading) return <div>Loading...</div>;
   if (error) return <div>{error.message}</div>;
 
+  const { theme, resolvedTheme, setTheme } = useTheme();
+
+
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
@@ -61,42 +65,6 @@ const ResponsiveAppBar = () => {
             Home
           </Typography>
 
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
-            >
-              {/* <MenuIcon /> */}
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
-              sx={{
-                display: { xs: 'block', md: 'none' },
-              }}
-            >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
           <Typography
             variant="h5"
             noWrap
@@ -128,7 +96,16 @@ const ResponsiveAppBar = () => {
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
+         
+        { !user &&
+      <IconButton sx={{ ml: 1 }} onClick={() => setTheme(resolvedTheme === "light" ? "dark" : "light")} color="inherit">
+        {resolvedTheme === 'light' ? <Brightness7Icon /> : <Brightness4Icon />}
+      </IconButton>}
+
             {user ? <div>
+              <IconButton sx={{ ml: 1 }} onClick={() => setTheme(resolvedTheme === "light" ? "dark" : "light")} color="inherit">
+        {resolvedTheme === 'light' ? <Brightness7Icon /> : <Brightness4Icon />}
+      </IconButton> 
 
               <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>

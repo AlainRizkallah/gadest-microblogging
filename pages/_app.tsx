@@ -1,14 +1,19 @@
 import '../styles/globals.css'
 import type { AppProps } from 'next/app'
 import { UserProvider } from '@auth0/nextjs-auth0';
-import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
+import { createTheme } from '@mui/material/styles';
 import { green, purple } from '@mui/material/colors';
-import darkTheme from '../styles/theme/darkTheme';
-import lightTheme from '../styles/theme/lightTheme';
 import { CssBaseline } from '@mui/material';
+import { CacheProvider, css, EmotionCache } from "@emotion/react";
+import createEmotionCache from "../components/theme/createEmotionCache";
+import { GlobalStyles } from "@mui/material";
 import {QueryClient, QueryClientProvider} from 'react-query'
+import PageProvider from '../components/PageProvider';
+import { ThemeProvider } from 'next-themes';
 
 const queryClient = new QueryClient()
+
+const clientSideEmotionCache = createEmotionCache();
 
 declare module '@mui/material/styles' {
   interface Theme {
@@ -35,15 +40,39 @@ const theme = createTheme({
   },
 });
 
-function MyApp({ Component, pageProps }: AppProps) {
+type CustomAppProps = AppProps & {
+  emotionCache: EmotionCache 
+}
+
+function MyApp({ Component, pageProps, emotionCache = clientSideEmotionCache }: CustomAppProps) {
 
   return (
     <UserProvider>
-      <ThemeProvider theme={lightTheme}>
-      <CssBaseline />
-      <QueryClientProvider client={queryClient}>
-      <Component {...pageProps} />
-      </QueryClientProvider>
+      <ThemeProvider>
+        <CacheProvider value={emotionCache}>
+          <PageProvider>
+            <CssBaseline />
+            <GlobalStyles
+            styles={css`  
+              :root {
+                body {
+                  background-color: #fff;
+                  color: #121212;
+                }
+              }
+[data-theme="dark"] {
+                body {
+                  background-color: #121212;
+                  color: #fff;
+                }
+              }
+            `}
+          />
+            <QueryClientProvider client={queryClient}>
+              <Component {...pageProps} />
+            </QueryClientProvider>
+          </PageProvider>
+        </CacheProvider>
       </ThemeProvider>
     </UserProvider>
   )
