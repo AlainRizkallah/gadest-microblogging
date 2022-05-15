@@ -5,12 +5,12 @@ import prisma from '../lib/prisma';
 import Post, { PostProps } from '../components/Post'
 import { useEffect, useState } from 'react'
 import { useUser } from '@auth0/nextjs-auth0'
-import { Box, Button, CircularProgress, Grid, Paper, TextField } from '@mui/material'
-import { useRouter } from 'next/router'
+import { CircularProgress } from '@mui/material'
 import axios from 'axios'
 import { useInfiniteQuery } from 'react-query';
 import React from 'react';
-import { InView, useInView } from 'react-intersection-observer';
+import { useInView } from 'react-intersection-observer';
+import NewPost from '../components/NewPost';
 
 type Props = {
   feed: PostProps[]
@@ -18,29 +18,12 @@ type Props = {
 
 const Home: NextPage<Props> = (props) => {
   const { user } = useUser()
-  const router = useRouter();
   const {ref, inView} = useInView()
 
 
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
   const [refresh, setRefresh] = useState(true);
 
-  const submitData = async (e: React.SyntheticEvent) => {
-    e.preventDefault();
-    try {
-      const body = { title, content };
-      await fetch('/api/post', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-      router.reload();
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
+  
   useEffect(()=>{
     if(inView && hasNextPage)
     fetchNextPage()
@@ -64,44 +47,7 @@ const Home: NextPage<Props> = (props) => {
         <h1>Public Feed</h1>
         <main>
           {user ?
-          <div>
-            <Box component={Paper} p={2} mb={1}>
-          <form onSubmit={submitData}>
-          <h2>New Post</h2>
-          <Grid container spacing={1}>
-            <Grid item xs={12}>
-              <TextField
-              required
-              id="outlined-required"
-              label="Title"
-              defaultValue="Post Title"
-              onChange={(e) => setTitle(e.target.value)}
-              value={title}
-              color='secondary'
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-              id="outlined-textarea"
-              label="Description"
-              placeholder="Placeholder"
-              multiline
-              fullWidth
-              rows={4}
-              onChange={(e) => setContent(e.target.value)}
-              value={content}
-              color='secondary'
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <Button  disabled={!content || !title} type="submit" color='secondary'>
-                Create 
-              </Button>
-            </Grid>
-          </Grid>
-          </form>
-          </Box>
-        </div>
+          <NewPost/>
         : ""}
 
           { isLoading ? <CircularProgress color='secondary'/> : ""}
