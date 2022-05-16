@@ -30,8 +30,8 @@ const NewPost: React.FC = () => {
       const imageUrl = `https://${process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME}.s3.amazonaws.com/${post_id}-${filename}`
       const data = await res.json()
       console.log('data',data)
-      const body = new FormData();
-      // @ts-ignore
+      const body : any = new FormData();
+      // @ts-ignore with body : any
       Object.entries({ ...data.fields}).forEach(([key, value]) => {
         body.append(key, value)
       })
@@ -63,7 +63,7 @@ const NewPost: React.FC = () => {
       });
       if(image)
       await uploadToServer(post_id)
-      Router.reload(window.location.pathname)
+      router.reload()
       
     } catch (error) {
       console.error(error);
