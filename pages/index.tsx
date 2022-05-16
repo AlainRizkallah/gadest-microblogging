@@ -35,8 +35,6 @@ const Home: NextPage<Props> = (props) => {
     getNextPageParam: (lastPage) => lastPage.nextId ?? false,
   })
 
-  console.log(data)
-
   return (
     <Layout>
       <Head>

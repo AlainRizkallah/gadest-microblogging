@@ -19,7 +19,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse<a
       author: { connect: { email: user?.email } },
     },
   });
-  res.json(result);
+  return res.json(result.id);
   }
   if(req.method === 'GET'){
     const limit= 5
@@ -59,5 +59,17 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse<a
       },
     });
     return res.json(result);
+  }
+  if(req.method === 'PUT'){
+    const { post_id, imageUrl } = req.body;
+    const result = await prisma.post.update({
+      where: {
+        id: post_id,
+      },
+      data: {
+        pictureUrl: imageUrl,
+      },
+    });
+    
   }
 }

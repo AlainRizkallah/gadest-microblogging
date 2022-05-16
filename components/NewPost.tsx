@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Router, { useRouter } from "next/router";
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, Paper, TextField, useMediaQuery, useTheme } from "@mui/material";
-import { UserProfile } from "@auth0/nextjs-auth0";
-import { PropaneSharp } from "@mui/icons-material";
-import DeleteIcon from '@mui/icons-material/Delete';
+import Image from "next/image"
+
 
 
 
@@ -12,17 +11,60 @@ const NewPost: React.FC = () => {
   const router = useRouter();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  // TODO: remove any type
+  const [image, setImage] = useState<string|Blob|any>('');
+  const [createObjectURL, setCreateObjectURL] = useState<any>(null);
+
+  const uploadToClient = (event : any) => {
+    if (event.target.files && event.target.files[0]) {
+      const i = event.target.files[0];
+      setImage(i);
+      setCreateObjectURL(URL.createObjectURL(i));
+    }
+  };
+
+  const uploadToServer = async (post_id : string) => { 
+      const filename = encodeURIComponent(image.name)  
+      console.log('filename',filename) 
+      const res = await fetch(`/api/upload-image?file=${post_id}-${filename}`)
+      const imageUrl = `https://${process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME}.s3.amazonaws.com/${post_id}-${filename}`
+      const data = await res.json()
+      console.log('data',data)
+      const body = new FormData();
+      // @ts-ignore
+      Object.entries({ ...data.fields}).forEach(([key, value]) => {
+        body.append(key, value)
+      })
+      body.append('file', image)
+      const res2 = await fetch(data.url, {
+        method: 'POST',
+        body: body,
+      }).then(response => console.log('response2',response))      
+      const res3 = await fetch('/api/post', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ post_id, imageUrl }),
+      });     
+  };
 
   const submitData = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     try {
       const body = { title, content };
-      await fetch('/api/post', {
+      const post_id : string = await fetch('/api/post', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
+        body: JSON.stringify(body), 
+      }).then(function(response) {
+        return response.json();
+      }).then(function(post_id) {
+        // console.log('data', post_id);
+        return post_id;
       });
-      router.reload();
+      if(image)
+      await uploadToServer(post_id)
+      Router.reload(window.location.pathname)
+      
     } catch (error) {
       console.error(error);
     }
@@ -45,6 +87,23 @@ const NewPost: React.FC = () => {
               color='secondary'
               />
             </Grid>
+            <Grid item xs={12}>
+            <Grid item xs={12} mb={3}>
+              <h4>Post picture</h4>
+              <input type="file" name="myImage" onChange={uploadToClient} accept="image/png, image/jpeg" />
+              </Grid>
+              {createObjectURL && 
+              <Grid sx={{ flexGrow: 1 }} container spacing={0} mb={3}>
+                <Grid item xs={12}>
+                  <Grid container justifyContent="center" spacing={0}>
+                    <Grid item xs={6}>
+                    <Image src={createObjectURL} alt="" title="" width="100%" height="50%" layout="responsive" objectFit="contain"/> 
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Grid>}
+              
+            </Grid> 
             <Grid item xs={12}>
               <TextField
               id="outlined-textarea"

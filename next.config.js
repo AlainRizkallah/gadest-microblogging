@@ -6,6 +6,10 @@ const nextConfig = {
     // your project has ESLint errors.
     ignoreDuringBuilds: true,
   },
+  images:{
+    domains: ['gadest-microblogging-bucket.s3.amazonaws.com'],
+    formats: ['image/avif', 'image/webp']
+  }
 }
 
 module.exports = nextConfig

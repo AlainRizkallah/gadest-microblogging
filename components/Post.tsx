@@ -4,6 +4,7 @@ import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, D
 import { UserProfile } from "@auth0/nextjs-auth0";
 import { PropaneSharp } from "@mui/icons-material";
 import DeleteIcon from '@mui/icons-material/Delete';
+import Image from "next/image";
 
 export type PostProps = {
   id: string;
@@ -15,6 +16,7 @@ export type PostProps = {
   content: string;
   createdAt: Date;
   updatedAt: Date;
+  pictureUrl: string;
 };
 
 const Post: React.FC<{ post: PostProps, user:UserProfile | undefined }> = ({ post, user }) => {
@@ -77,6 +79,17 @@ const Post: React.FC<{ post: PostProps, user:UserProfile | undefined }> = ({ pos
       </Box>
 
       <small>By {authorName}</small>
+
+      {post.pictureUrl !=="" &&  <Grid sx={{ flexGrow: 1 }} container spacing={0}>
+        <Grid item xs={12}>
+          <Grid container justifyContent="center" spacing={0}>
+            <Grid item xs={6}>
+            <Image src={post.pictureUrl} alt="" title="" width="100%" height="50%" layout="responsive" objectFit="contain"/> 
+            </Grid>
+          </Grid>
+        </Grid>
+      </Grid>}
+
       <p>{post.content}</p>
       <small>{createdAt ? <p>createdAt: {createdAt}</p> : ""}</small>
       </Box>
