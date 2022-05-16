@@ -83,8 +83,8 @@ const Post: React.FC<{ post: PostProps, user:UserProfile | undefined }> = ({ pos
       {post.pictureUrl !=="" &&  <Grid sx={{ flexGrow: 1 }} container spacing={0}>
         <Grid item xs={12}>
           <Grid container justifyContent="center" spacing={0}>
-            <Grid item xs={6}>
-            <Image src={post.pictureUrl} alt="" title="" width="100%" height="50%" layout="responsive" objectFit="contain"/> 
+            <Grid item xs={12} md={6}>
+            <Image src={post.pictureUrl} alt="" title="" width="100%" height="100%" layout="responsive" objectFit="contain"/> 
             </Grid>
           </Grid>
         </Grid>
