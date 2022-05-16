@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Router, { useRouter } from "next/router";
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, Paper, TextField, useMediaQuery, useTheme } from "@mui/material";
+import { Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, Paper, TextField, useMediaQuery, useTheme } from "@mui/material";
 import Image from "next/image"
 
 
@@ -14,6 +14,7 @@ const NewPost: React.FC = () => {
   // TODO: remove any type
   const [image, setImage] = useState<string|Blob|any>('');
   const [createObjectURL, setCreateObjectURL] = useState<any>(null);
+  const [submitted, setSubmitted] = useState(false);
 
   const uploadToClient = (event : any) => {
     if (event.target.files && event.target.files[0]) {
@@ -22,6 +23,11 @@ const NewPost: React.FC = () => {
       setCreateObjectURL(URL.createObjectURL(i));
     }
   };
+
+  //  useEffect(()=>{
+  //   if(redirect)
+  //   Router.push('/hello')
+  // }, [redirect])
 
   const uploadToServer = async (post_id : string) => { 
       const filename = encodeURIComponent(image.name)  
@@ -39,16 +45,17 @@ const NewPost: React.FC = () => {
       const res2 = await fetch(data.url, {
         method: 'POST',
         body: body,
-      }).then(response => console.log('response2',response))      
-      const res3 = await fetch('/api/post', {
+      })  
+      fetch('/api/post', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ post_id, imageUrl }),
-      });     
+      })
   };
 
   const submitData = async (e: React.SyntheticEvent) => {
     e.preventDefault();
+    setSubmitted(true)
     try {
       const body = { title, content };
       const post_id : string = await fetch('/api/post', {
@@ -118,9 +125,10 @@ const NewPost: React.FC = () => {
               />
             </Grid>
             <Grid item xs={12}>
+              {submitted ? <CircularProgress color='secondary'/> :
               <Button  disabled={!content || !title} type="submit" color='secondary'>
                 Create 
-              </Button>
+              </Button>}
             </Grid>
           </Grid>
           </form>
