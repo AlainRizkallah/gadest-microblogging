@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Router, { useRouter } from "next/router";
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, Paper, useMediaQuery, useTheme } from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, Paper, Skeleton, Stack, useMediaQuery, useTheme } from "@mui/material";
 import { UserProfile } from "@auth0/nextjs-auth0";
 import { PropaneSharp } from "@mui/icons-material";
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -27,6 +27,12 @@ const Post: React.FC<{ post: PostProps, user:UserProfile | undefined }> = ({ pos
 
   const [open, setOpen] = React.useState(false);
   const theme = useTheme();
+  const {
+    palette: { primary },
+  } = useTheme();
+
+  const [isLoaded, setIsLoaded] = React.useState(false);
+  
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   const handleClickOpen = () => {
@@ -85,7 +91,21 @@ const Post: React.FC<{ post: PostProps, user:UserProfile | undefined }> = ({ pos
         <Grid item xs={12}>
           <Grid container justifyContent="center" spacing={0}>
             <Grid item xs={12} md={6}>
-            <Image src={post.pictureUrl} alt="" title="" width="100%" height="100%" layout="responsive" objectFit="contain"/> 
+            <Image src={post.pictureUrl} 
+            alt="" 
+            title="" 
+            width="100%" 
+            height="100%" 
+            layout="responsive" 
+            objectFit="contain"
+            onLoad={() => setIsLoaded(true)}/> 
+            {!isLoaded && (
+            <Stack spacing={1}>
+              <Skeleton variant="text" />
+              <Skeleton variant="circular" width={50} height={50} />
+              <Skeleton variant="rectangular" width={'100%'} height={118} />
+            </Stack>
+             )}
             </Grid>
           </Grid>
         </Grid>
