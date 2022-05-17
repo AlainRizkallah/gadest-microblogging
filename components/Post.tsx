@@ -60,13 +60,14 @@ const Post: React.FC<{ post: PostProps, user:UserProfile | undefined }> = ({ pos
 
   useEffect(() =>  {
     const myDate = post.createdAt;
-    const time = new Date(myDate).toLocaleString();
+    const options = { year: "numeric", month: 'long', day: 'numeric', hour: 'numeric', minute:'numeric' } as const;
+    const time = new Date(myDate).toLocaleString('en-GB', options);
     setCreatedAt(time);
   }, [])
   
   return (
     <div>
-      <Box p={1} pl={3} mb={1} component={Paper}>
+      <Box p={1} px={2} mb={1} component={Paper}>
       <Box display={'flex'} flexGrow={1}>
         <h2>{post.title}</h2> 
         {user && user.email===post.author?.email && 
@@ -80,7 +81,7 @@ const Post: React.FC<{ post: PostProps, user:UserProfile | undefined }> = ({ pos
 
       <small>By {authorName}</small>
 
-      {post.pictureUrl !=="" &&  <Grid sx={{ flexGrow: 1 }} container spacing={0}>
+      {post.pictureUrl !=="" &&  <Grid sx={{ flexGrow: 1 }} container spacing={0} marginTop={3}>
         <Grid item xs={12}>
           <Grid container justifyContent="center" spacing={0}>
             <Grid item xs={12} md={6}>
@@ -91,7 +92,7 @@ const Post: React.FC<{ post: PostProps, user:UserProfile | undefined }> = ({ pos
       </Grid>}
 
       <p>{post.content}</p>
-      <small>{createdAt ? <p>createdAt: {createdAt}</p> : ""}</small>
+      <small>{createdAt ? <p>{createdAt}</p> : ""}</small>
       </Box>
 
       <div>
