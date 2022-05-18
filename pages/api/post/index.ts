@@ -41,6 +41,9 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse<a
         author: {
           select: { name: true, email: true },
         },
+        likes: {
+          select: { id: true , user_email: true },
+        },
       },
     });
     return res.json({posts, nextId: posts.length === limit ?  posts[limit - 1].id : undefined })

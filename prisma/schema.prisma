@@ -11,22 +11,36 @@ generator client {
 }
 
 model Post {
-  id        String     @default(cuid()) @id
-  title     String
-  content   String?
-  author    User?   @relation(fields: [authorId], references: [id])
-  authorId  String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String   @id @default(cuid())
+  title      String
+  content    String?
+  author     User?    @relation(fields: [authorId], references: [id])
+  authorId   String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
   pictureUrl String?  @default("")
+  likes      Like[]
 }
 
 model User {
-  id            String       @default(cuid()) @id
-  name          String?
-  email         String?   @unique
-  createdAt     DateTime  @default(now()) @map(name: "created_at")
-  updatedAt     DateTime  @updatedAt @map(name: "updated_at")
-  posts         Post[]
+  id        String   @id @default(cuid())
+  name      String?
+  email     String?  @unique
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  updatedAt DateTime @updatedAt @map(name: "updated_at")
+  posts     Post[]
+
   @@map(name: "users")
+  likes     Like[]
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [user_email], references: [email])
+  user_email   String
+  post      Post     @relation(fields: [post_id], references: [id])
+  post_id   String
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  
+  @@map(name: "likes")
 }

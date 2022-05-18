@@ -5,6 +5,8 @@ import { UserProfile } from "@auth0/nextjs-auth0";
 import { PropaneSharp } from "@mui/icons-material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import Image from "next/image";
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 export type PostProps = {
   id: string;
@@ -17,6 +19,11 @@ export type PostProps = {
   createdAt: Date;
   updatedAt: Date;
   pictureUrl: string;
+  likes:{
+    id     :   String;
+    user_email :  String;
+    post_id :  String;
+  }[] | null[];
 };
 
 const Post: React.FC<{ post: PostProps, user:UserProfile | undefined }> = ({ post, user }) => {
@@ -24,7 +31,7 @@ const Post: React.FC<{ post: PostProps, user:UserProfile | undefined }> = ({ pos
 
   const authorName = post.author ? post.author.email : "Unknown author";
   const [createdAt, setCreatedAt] = useState<any>()
-
+  
   const [open, setOpen] = React.useState(false);
   const theme = useTheme();
   const {
@@ -71,6 +78,40 @@ const Post: React.FC<{ post: PostProps, user:UserProfile | undefined }> = ({ pos
     setCreatedAt(time);
   }, [])
   
+  const likes_users : String[]= []
+  post.likes.map((like) => {
+    if(like)
+    likes_users.push(like.user_email)
+  })
+
+  const createLike = async (e: React.SyntheticEvent) => {
+    try {
+      const body = { post, user };
+      await fetch('/api/like', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      router.reload();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  
+  const deleteLike = async (e: React.SyntheticEvent) => {
+    try {
+      const body = { post, user };
+      await fetch('/api/like', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      router.reload();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div>
       <Box p={1} px={2} mb={1} component={Paper}>
@@ -113,6 +154,16 @@ const Post: React.FC<{ post: PostProps, user:UserProfile | undefined }> = ({ pos
 
       <p>{post.content}</p>
       <small>{createdAt ? <p>{createdAt}</p> : ""}</small>
+      <p>likes: {post.likes.length}</p>
+      {user && user.email && likes_users.includes(user.email) ?
+      <IconButton onClick={deleteLike} aria-label="delete" color='secondary' size='small'>
+        <FavoriteIcon />
+      </IconButton>
+      :
+      <IconButton onClick={createLike} aria-label="delete" color='secondary' size='small'>
+        <FavoriteBorderIcon />
+      </IconButton>
+      }
       </Box>
 
       <div>
