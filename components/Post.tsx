@@ -174,17 +174,30 @@ const Post: React.FC<{ post: PostProps, user:UserProfile | undefined }> = ({ pos
       </Grid>}
 
       <p>{post.content}</p>
-      <small>{createdAt ? <p>{createdAt}</p> : ""}</small>
-      <p>likes: {countUnique(post.likes)}</p>
-      {user && user.email && likes_users.includes(user.email) ?
-      <IconButton onClick={handleUnLikeClick} disabled={disabledButton} aria-label="delete" color='secondary' size='small'>
-        <FavoriteIcon />
-      </IconButton>
-      :
-      <IconButton onClick={handleLikeClick} disabled={disabledButton} aria-label="delete" color='secondary' size='small'>
-        <FavoriteBorderIcon />
-      </IconButton>
-      }
+      
+      
+      <Box flexDirection='row' display="flex">
+      <Box sx={{ flexGrow: 1 }}>
+        <small>{createdAt ? <p>{createdAt}</p> : ""}</small>
+      </Box>
+      <Box>
+        <Stack direction="row" justifyContent="end" alignItems="center">
+        <Box>{countUnique(post.likes)}</Box>
+        <Box>  {user && user.email && likes_users.includes(user.email) ?
+        <IconButton onClick={handleUnLikeClick} disabled={disabledButton} aria-label="delete" color='secondary' size='small'>
+          <FavoriteIcon />
+        </IconButton>
+        :
+        <IconButton onClick={handleLikeClick} disabled={disabledButton} aria-label="delete" color='secondary' size='small'>
+          <FavoriteBorderIcon />
+        </IconButton>
+        }</Box>
+        </Stack>
+      </Box>
+     
+      </Box>
+      
+    
       </Box>
 
       <div>
