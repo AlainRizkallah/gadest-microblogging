@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react'
 import { useUser } from '@auth0/nextjs-auth0'
 import { CircularProgress } from '@mui/material'
 import axios from 'axios'
-import { useInfiniteQuery } from 'react-query';
+import { useInfiniteQuery, useQueryClient } from 'react-query';
 import React from 'react';
 import { useInView } from 'react-intersection-observer';
 import NewPost from '../components/NewPost';
@@ -21,19 +21,20 @@ const Home: NextPage<Props> = (props) => {
   const {ref, inView} = useInView()
 
 
-  const [refresh, setRefresh] = useState(true);
-
   
   useEffect(()=>{
     if(inView && hasNextPage)
     fetchNextPage()
-  }, [inView, refresh])
-  const {isLoading, isError, data, error, isFetchingNextPage, fetchNextPage, hasNextPage} = useInfiniteQuery('posts', async({ pageParam = ''}) => {
+  }, [inView])
+  
+  const {isLoading, isError, data, error, isFetchingNextPage, fetchNextPage, hasNextPage}
+   = useInfiniteQuery(
+     'posts',
+      async({ pageParam = ''}) => {
     const res = await axios.get('/api/post?cursor=' + pageParam)
-    return res.data
-  },{
-    getNextPageParam: (lastPage) => lastPage.nextId ?? false,
-  })
+    return res.data},
+    {getNextPageParam: (lastPage) => lastPage.nextId ?? false,}
+    )
 
   return (
     <Layout>

@@ -7,6 +7,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Image from "next/image";
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import { useQueryClient } from "react-query";
 
 export type PostProps = {
   id: string;
@@ -27,6 +28,15 @@ export type PostProps = {
 };
 
 const Post: React.FC<{ post: PostProps, user:UserProfile | undefined }> = ({ post, user }) => {
+  const queryClient = useQueryClient()
+  const reload = () => {
+    queryClient.invalidateQueries('posts')
+  }
+  function countUnique(iterable: Iterable<unknown> | null | undefined) {
+    return new Set(iterable).size;
+  }
+  const [disabledButton, setDisabledButton] = React.useState(false);
+
   const router = useRouter();
 
   const authorName = post.author ? post.author.email : "Unknown author";
@@ -41,6 +51,17 @@ const Post: React.FC<{ post: PostProps, user:UserProfile | undefined }> = ({ pos
   const [isLoaded, setIsLoaded] = React.useState(false);
   
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+
+  const handleLikeClick = () => {
+    setDisabledButton(true)
+    createLike()
+    
+  };
+
+  const handleUnLikeClick = () => {
+    setDisabledButton(true)
+    deleteLike()
+  };
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -84,29 +105,29 @@ const Post: React.FC<{ post: PostProps, user:UserProfile | undefined }> = ({ pos
     likes_users.push(like.user_email)
   })
 
-  const createLike = async (e: React.SyntheticEvent) => {
+  const createLike = async () => {
     try {
       const body = { post, user };
       await fetch('/api/like', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
-      });
-      router.reload();
+      }).then(()=>{setDisabledButton(false)});
+      reload()
     } catch (error) {
       console.error(error);
     }
   };
   
-  const deleteLike = async (e: React.SyntheticEvent) => {
+  const deleteLike = async () => {
     try {
       const body = { post, user };
       await fetch('/api/like', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
-      });
-      router.reload();
+      }).then(()=>{setDisabledButton(false)});
+      reload()
     } catch (error) {
       console.error(error);
     }
@@ -154,13 +175,14 @@ const Post: React.FC<{ post: PostProps, user:UserProfile | undefined }> = ({ pos
 
       <p>{post.content}</p>
       <small>{createdAt ? <p>{createdAt}</p> : ""}</small>
-      <p>likes: {post.likes.length}</p>
+      <p>likes: {countUnique(post.likes)}</p>
+      {console.log(post.likes)}
       {user && user.email && likes_users.includes(user.email) ?
-      <IconButton onClick={deleteLike} aria-label="delete" color='secondary' size='small'>
+      <IconButton onClick={handleUnLikeClick} disabled={disabledButton} aria-label="delete" color='secondary' size='small'>
         <FavoriteIcon />
       </IconButton>
       :
-      <IconButton onClick={createLike} aria-label="delete" color='secondary' size='small'>
+      <IconButton onClick={handleLikeClick} disabled={disabledButton} aria-label="delete" color='secondary' size='small'>
         <FavoriteBorderIcon />
       </IconButton>
       }
