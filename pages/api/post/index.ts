@@ -52,10 +52,13 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse<a
     const { post } = req.body;
     if (!session) return { prisma }
     const { user, accessToken } = session
-    console.log('user.email', user.email)
-    console.log('post', post)
-    console.log('post.user', post.user)
     if (user.email !== post.author.email) return { prisma }
+    const r = await prisma.like.deleteMany({
+      where: {
+        post_id: post.id,
+      },
+    });
+    
     const result = await prisma.post.delete({
       where: {
         id: post.id,
