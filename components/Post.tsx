@@ -176,7 +176,6 @@ const Post: React.FC<{ post: PostProps, user:UserProfile | undefined }> = ({ pos
       <p>{post.content}</p>
       <small>{createdAt ? <p>{createdAt}</p> : ""}</small>
       <p>likes: {countUnique(post.likes)}</p>
-      {console.log(post.likes)}
       {user && user.email && likes_users.includes(user.email) ?
       <IconButton onClick={handleUnLikeClick} disabled={disabledButton} aria-label="delete" color='secondary' size='small'>
         <FavoriteIcon />
