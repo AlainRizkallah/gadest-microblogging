@@ -43,4 +43,6 @@ model Like {
   createdAt DateTime @default(now()) @map(name: "created_at")
   
   @@map(name: "likes")
+  @@unique([user_email, post_id], name: "onelikeperuser")
+
 }
