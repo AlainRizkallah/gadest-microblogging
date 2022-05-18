@@ -31,11 +31,9 @@ const NewPost: React.FC = () => {
 
   const uploadToServer = async (post_id : string) => { 
       const filename = encodeURIComponent(image.name)  
-      console.log('filename',filename) 
       const res = await fetch(`/api/upload-image?file=${post_id}-${filename}`)
       const imageUrl = `https://${process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME}.s3.amazonaws.com/${post_id}-${filename}`
       const data = await res.json()
-      console.log('data',data)
       const body : any = new FormData();
       // @ts-ignore with body : any
       Object.entries({ ...data.fields}).forEach(([key, value]) => {
@@ -65,7 +63,6 @@ const NewPost: React.FC = () => {
       }).then(function(response) {
         return response.json();
       }).then(function(post_id) {
-        // console.log('data', post_id);
         return post_id;
       });
       if(image)
