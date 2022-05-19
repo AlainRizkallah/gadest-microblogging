@@ -25,8 +25,6 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse<a
     const limit= 5
     const order = req.query.order ?? ''
     const cursor = req.query.cursor ?? ''
-    console.log('cursor', cursor)
-    console.log('order', order)
     const cursorObj = cursor === '' ? undefined : {id: (cursor as string) } 
     const posts = await prisma.post.findMany({
       take: limit,
