@@ -53,6 +53,8 @@ const Post: React.FC<{ post: PostProps, user:UserProfile | undefined }> = ({ pos
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   const handleLikeClick = () => {
+    if(!user)
+    router.push("/api/auth/login")
     setDisabledButton(true)
     createLike()
     
