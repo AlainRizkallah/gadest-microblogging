@@ -39,7 +39,7 @@ type Props = {
     let handleFetchImage = async (url: string) => {
       let {
         data: { image },
-      } = await axios.get("http://localhost:3000/api/preview", {
+      } = await axios.get("/api/preview", {
         params: { url },
       });
       setImagePreview(image);
