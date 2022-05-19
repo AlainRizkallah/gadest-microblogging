@@ -71,7 +71,7 @@ const NewPost: React.FC = () => {
   
   return (
     <div>
-          <Box component={Paper} p={2} my={1}>
+          <Box component={Paper} p={2} mt={1}>
           <form onSubmit={submitData}>
           <h2>New Post</h2>
           <Grid container spacing={1}>

@@ -1,11 +1,11 @@
 import { useUser } from '@auth0/nextjs-auth0';
-import { CircularProgress, Stack } from '@mui/material';
+import { Chip, CircularProgress, Stack } from '@mui/material';
 import axios from 'axios';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useInfiniteQuery } from 'react-query';
+import { useInfiniteQuery, useQueryClient } from 'react-query';
 import Layout from '../components/Layout';
 import NewPost from '../components/NewPost';
 import Post, { PostProps } from '../components/Post';
@@ -17,7 +17,7 @@ type Props = {
 const Home: NextPage<Props> = (props) => {
   const { user } = useUser()
   const {ref, inView} = useInView()
-
+  const [orderBy, setOrderBy] = useState('time');
 
   
   useEffect(()=>{
@@ -27,12 +27,19 @@ const Home: NextPage<Props> = (props) => {
   
   const {isLoading, isError, data, error, isFetchingNextPage, fetchNextPage, hasNextPage}
    = useInfiniteQuery(
-     'posts',
+     ['posts', orderBy],
       async({ pageParam = ''}) => {
-    const res = await axios.get('/api/post?cursor=' + pageParam)
+    const res = await axios.get('/api/post?cursor=' + pageParam +'&order=' + orderBy)
     return res.data},
     {getNextPageParam: (lastPage) => lastPage.nextId ?? false,}
     )
+
+    const handleClickMostLiked = () => {
+      setOrderBy('like')
+    }
+    const handleClickMostRecent = () => {
+      setOrderBy('time')
+    }
 
   return (
     <Layout>
@@ -41,11 +48,15 @@ const Home: NextPage<Props> = (props) => {
         <meta property="og:title" content="Home page title" key="home" />
       </Head>
       <div className="page">
-
         <main>
           {user ?
           <NewPost/>
         : ""}
+
+      <Stack pt={1} direction="row" spacing={1} justifyContent='center'>
+      <Chip label="Most recent" onClick={handleClickMostRecent} variant={orderBy === "time" ? 'filled' : 'outlined'} />
+      <Chip label="Most liked" onClick={handleClickMostLiked} variant={orderBy === "like" ? 'filled' : 'outlined'} />
+      </Stack>
 
           { isLoading ?  <Stack direction="row" justifyContent="center" alignItems="center" pt={4}><CircularProgress color='secondary'/></Stack> : ""}
           { isError ? <div>Error!</div> : ""}

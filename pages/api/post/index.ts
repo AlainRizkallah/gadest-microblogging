@@ -23,20 +23,36 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse<a
   }
   if(req.method === 'GET'){
     const limit= 5
+    const order = req.query.order ?? ''
     const cursor = req.query.cursor ?? ''
+    console.log('cursor', cursor)
+    console.log('order', order)
     const cursorObj = cursor === '' ? undefined : {id: (cursor as string) } 
     const posts = await prisma.post.findMany({
       take: limit,
       cursor: cursorObj,
       skip: cursor === '' ? 0 : 1,
-      orderBy: [
+      orderBy: order === 'like' ? 
+      [
+        { 
+          likes: {
+            _count: 'desc'
+          },
+        },
         {
+          id: 'desc',
+        },
+      ]
+      :
+      [
+        { 
           createdAt: 'desc',
         },
         {
           id: 'desc',
         },
-      ],
+      ]
+      ,
       include: {
         author: {
           select: { name: true, email: true },
