@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
-import Router, { useRouter } from "next/router";
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, Paper, Skeleton, Stack, useMediaQuery, useTheme } from "@mui/material";
 import { UserProfile } from "@auth0/nextjs-auth0";
-import { PropaneSharp } from "@mui/icons-material";
 import DeleteIcon from '@mui/icons-material/Delete';
-import Image from "next/image";
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, Paper, Skeleton, Stack, useMediaQuery, useTheme } from "@mui/material";
+import Image from "next/image";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
 import { useQueryClient } from "react-query";
+import CustomLink from "./CustomLink";
 
 export type PostProps = {
   id: string;
@@ -92,6 +92,20 @@ const Post: React.FC<{ post: PostProps, user:UserProfile | undefined }> = ({ pos
     handleClose();
   };
 
+  const processString = require('react-process-string');
+
+  let config = [{
+      regex: /(http|https):\/\/(\S+)\.([a-z]{2,}?)(.*?)( |\,|$|\.)/gim,
+      fn: (key: React.Key | null | undefined, result: (string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined)[]) => <span key={key}>
+                              <CustomLink href={`${result[1]}://${result[2]}.${result[3]}${result[4]}`}>{result[2]}.{result[3]}{result[4]}</CustomLink>{result[5]}
+                          </span>
+  }, {
+      regex: /(\S+)\.([a-z]{2,}?)(.*?)( |\,|$|\.)/gim,
+      fn: (key: React.Key | null | undefined, result: (string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined)[]) => <span key={key}>
+                              <CustomLink href={`http://${result[1]}.${result[2]}${result[3]}`}>{result[1]}.{result[2]}{result[3]}</CustomLink>{result[4]}
+                          </span>
+  }];
+
   useEffect(() =>  {
     const myDate = post.createdAt;
     const options = { year: "numeric", month: 'long', day: 'numeric', hour: 'numeric', minute:'numeric' } as const;
@@ -135,9 +149,9 @@ const Post: React.FC<{ post: PostProps, user:UserProfile | undefined }> = ({ pos
 
   return (
     <div>
-      <Box p={1} px={2} mb={1} component={Paper}>
+      <Box p={1} px={2} mt={1} component={Paper}>
       <Box display={'flex'} flexGrow={1}>
-        <h2>{post.title}</h2> 
+      <h2>{processString(config)(post.title)}</h2>
         {user && user.email===post.author?.email && 
       <Grid container justifyContent="flex-end" maxWidth={50}>
         <IconButton onClick={handleClickOpen} aria-label="delete" color='secondary' size='small'>
@@ -173,7 +187,7 @@ const Post: React.FC<{ post: PostProps, user:UserProfile | undefined }> = ({ pos
         </Grid>
       </Grid>}
 
-      <p>{post.content}</p>
+      <p>{processString(config)(post.content)}</p>
       
       
       <Box flexDirection='row' display="flex">

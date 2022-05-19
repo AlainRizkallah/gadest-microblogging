@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Router, { useRouter } from "next/router";
-import { Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, Paper, TextField, useMediaQuery, useTheme } from "@mui/material";
+import { Box, Button, CircularProgress, Grid, IconButton, Paper, TextField, useMediaQuery, useTheme } from "@mui/material";
 import Image from "next/image"
 
 
@@ -23,11 +23,6 @@ const NewPost: React.FC = () => {
       setCreateObjectURL(URL.createObjectURL(i));
     }
   };
-
-  //  useEffect(()=>{
-  //   if(redirect)
-  //   Router.push('/hello')
-  // }, [redirect])
 
   const uploadToServer = async (post_id : string) => { 
       const filename = encodeURIComponent(image.name)  
@@ -76,7 +71,7 @@ const NewPost: React.FC = () => {
   
   return (
     <div>
-            <Box component={Paper} p={2} mb={1}>
+          <Box component={Paper} p={2} my={1}>
           <form onSubmit={submitData}>
           <h2>New Post</h2>
           <Grid container spacing={1}>

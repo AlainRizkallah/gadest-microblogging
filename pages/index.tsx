@@ -1,16 +1,14 @@
-import type { GetServerSideProps, NextPage } from 'next'
-import Head from 'next/head'
-import Layout from '../components/Layout'
-import prisma from '../lib/prisma';
-import Post, { PostProps } from '../components/Post'
-import { useEffect, useState } from 'react'
-import { useUser } from '@auth0/nextjs-auth0'
-import { CircularProgress } from '@mui/material'
-import axios from 'axios'
-import { useInfiniteQuery, useQueryClient } from 'react-query';
-import React from 'react';
+import { useUser } from '@auth0/nextjs-auth0';
+import { CircularProgress, Stack } from '@mui/material';
+import axios from 'axios';
+import type { NextPage } from 'next';
+import Head from 'next/head';
+import React, { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
+import { useInfiniteQuery } from 'react-query';
+import Layout from '../components/Layout';
 import NewPost from '../components/NewPost';
+import Post, { PostProps } from '../components/Post';
 
 type Props = {
   feed: PostProps[]
@@ -43,13 +41,13 @@ const Home: NextPage<Props> = (props) => {
         <meta property="og:title" content="Home page title" key="home" />
       </Head>
       <div className="page">
-        <h1>Public Feed</h1>
+
         <main>
           {user ?
           <NewPost/>
         : ""}
 
-          { isLoading ? <CircularProgress color='secondary'/> : ""}
+          { isLoading ?  <Stack direction="row" justifyContent="center" alignItems="center" pt={4}><CircularProgress color='secondary'/></Stack> : ""}
           { isError ? <div>Error!</div> : ""}
 
           {data && data.pages.map((page)=>(
