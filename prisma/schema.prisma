@@ -46,3 +46,8 @@ model Like {
   @@unique([user_email, post_id], name: "onelikeperuser")
 
 }
+
+model ImageCache {
+  url   String @id @unique
+  image String
+}

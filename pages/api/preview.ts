@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import puppeteer from "puppeteer";
+import prisma from "../../lib/prisma";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   try {
@@ -18,10 +19,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 }
 
 let getImageBase64 = async (url : any) => {
+  let cachedImage = await getCachedImage(url);
+  if (cachedImage) return cachedImage;
+
   let browser = await puppeteer.launch();
   let page = await browser.newPage();
   await page.goto(url);
-  let image = await page.screenshot({ encoding: "base64" });
+  let image : any = await page.screenshot({ encoding: "base64" });
   await browser.close();
+
+  await cacheImage(url, image);
+
   return image;
+};
+
+let getCachedImage = async (url : string) => {
+  const response = await prisma.imageCache.findUnique({ where: { url } });
+  return response?.image;
+};
+
+let cacheImage = async (url : string, image : string) => {
+  await prisma.imageCache.create({ data: { url, image } });
 };
